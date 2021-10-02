@@ -13,7 +13,11 @@ namespace UDPBroadcastReceiver
     class Program
     {
         static void Main(string[] args)
-        {
+        {//Default Values
+            //data received across the wire actual bytes should initiate to 0 to start
+            int nCRcv = 0;
+            //generate the string for inputting the data
+            string dataRcvd = String.Empty;
             //using socket constructor takes 3 parameters~
             //address family InterNetwork means we are using IPv4
             //SocketType Dgram means we are using data-gram media
@@ -25,33 +29,24 @@ namespace UDPBroadcastReceiver
             IPEndPoint ipEpLocal = new IPEndPoint(IPAddress.Any, 23000);
             //byte arrays are used to receive data 
             byte[] receiveBuffer = new byte[512];
-            //generate the string for inputting the data
-            string dataRcvd= String.Empty;
             //this Identifies the Ip Sender to validate they are acceptable
             IPEndPoint ipEpSender = new IPEndPoint(IPAddress.Any, 0);
-           //this establishes who the Sender is and applies it to a string variable for reference
+           //this establishes who the Sender is 
            EndPoint eSender = (EndPoint)ipEpSender;
            //values for standard uses
-          
-
-          
-            //try is used to ID if there is a problem with the connection!
+           //try is used to ID if there is a problem with the connection!
             try
             {
                 //we must bind the socket on the machine
                 //used to bind the socket to the local IP Endpoint
                 sockBroadCastReceiver.Bind(ipEpLocal);
-               
                 //place this into an infinite loop to constantly receive info
                 while (true)
                {
-                   //this shows the received from info and takes 2 parameters
+                   //this shows the received from info and Info Sent~ takes 2 parameters
                    //the byte array buffer 
                    //and the EndPointSender
-                   int ipSender = sockBroadCastReceiver.ReceiveFrom(receiveBuffer, ref eSender);
-
-                    //receive into the buffer the amount of data and returns an integer
-                    int nCRcv = sockBroadCastReceiver.Receive(receiveBuffer);
+                   nCRcv = sockBroadCastReceiver.ReceiveFrom(receiveBuffer, ref eSender);
                    //this takes in the data and converts it to readable info in ACSII format
                    //this takes 3 parameters
                    //bytes is # of Bytes from the buffer array //!receiveBuffer!//
@@ -62,17 +57,14 @@ namespace UDPBroadcastReceiver
                    Console.WriteLine("# Bytes Rcv: " + nCRcv + Environment.NewLine
                                      +"Info: " + dataRcvd+ Environment.NewLine+"from: " 
                                      + eSender.ToString());
-
+                   if (dataRcvd.Equals("<ECHO>"))
+                   {
+                       //this rebroadcasts the info back to the sender
+                        sockBroadCastReceiver.SendTo(receiveBuffer, 0, nCRcv, SocketFlags.None, eSender);
+                        Console.WriteLine("Text Echoed Back");
+                   }
                    //clears the array receiveBuffer once data has been received
                    Array.Clear(receiveBuffer, 0, receiveBuffer.Length);
-
-                 /*  // TODO echo function to send message along another path
-                   if (!dataRcvd.Equals("<ECHO>")) continue;
-                   //this rebroadcasts the info back to the sender
-                   sockBroadCastReceiver.SendTo(receiveBuffer, 0, nCRcv, SocketFlags.None, eSender);
-                   Console.WriteLine(" Echoed Back ");
-                 */
-
                }
             }
             //if you get this far you've broken something... next step is to figure out what
