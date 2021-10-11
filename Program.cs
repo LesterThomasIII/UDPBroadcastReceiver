@@ -23,10 +23,25 @@ namespace UDPBroadcastReceiver
             //SocketType Dgram means we are using data-gram media
             //ProtocolType Udp means we are using Udp protocols
             Socket sockBroadCastReceiver = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+            //used to set the port for listening
+            int pPort = 00000;
+            Console.WriteLine("input port #:");
+            string t = Console.ReadLine();
+            try
+            {
+                pPort = Convert.ToInt32(t);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Failed due to : " + e.ToString());
+            }
+            Console.WriteLine("Listening on Port: " + pPort);
+
             //IPEndpoints need 2 parameters
             //IPAddress designed to receive specific or any IP addresses
             //23000 is the port that the receiver is listening on the receiver must be on the same port received
-            IPEndPoint ipEpLocal = new IPEndPoint(IPAddress.Any, 23000);
+            IPEndPoint ipEpLocal = new IPEndPoint(IPAddress.Any, pPort);
             //byte arrays are used to receive data 
             byte[] receiveBuffer = new byte[512];
             //this Identifies the Ip Sender to validate they are acceptable
