@@ -4,4 +4,5 @@ this intial concept is designed to read data that is coming from anywhere UDP if
 Nothing elaborate, it is a simple console App that works with C#. 
 several TODO's still to go
 1. set what port you want to listen on
-2. fix it so you can get the IP Address from the remote sender if they provide it.
+~~~2. fix it so you can get the IP Address from the remote sender if they provide it.~~~ Completed with ECHO Command attached, Sender must initiate the ECHO Command
+
